@@ -1,0 +1,8 @@
+{
+  "engine": "cocos-creator-js",
+  "packages": "packages",
+  "name": "Sudoku",
+  "uuid": "72e4f34c-225b-4471-b225-8ab31aa88984",
+  "version": "2.3.2",
+  "id": "fe05e85d-597d-489c-bb51-5745b639ce02"
+}

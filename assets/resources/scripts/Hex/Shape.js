@@ -10,7 +10,7 @@ cc.Class({
 
   properties: {
     tileH: 83, // 方块六边形高度
-    tileScale: 0.7, // 方块默认缩放值，用于点击后放大效果
+    tileScale: 0.6, // 方块默认缩放值，用于点击后放大效果
     board: {
       // 获取棋盘节点访问
       default: null,
@@ -91,7 +91,7 @@ cc.Class({
     this.node.on('touchstart', event => {
       this.node.setScale(1);
       this.node.children.forEach(child => {
-        child.setScale(0.8);
+        child.setScale(0.7);
       });
       this.boardTiles = [];
       this.fillTiles = [];
@@ -156,7 +156,7 @@ cc.Class({
 
     // TODO: 存在无效检测的情况，可优化
     for (let i = 0; i < boardFrameListLength; i++) {
-      const boardNode = boardFrameList[i].node;
+      const boardNode = boardFrameList[i];
       let srcPos = cc.v2(boardNode.x, boardNode.y);
       let count = 0;
       if (!boardNode.isFulled) {
@@ -170,7 +170,7 @@ cc.Class({
 
           // 遍历棋盘格子，判断方块中各六边形是否可以放入
           for (let k = 0; k < boardFrameListLength; k++) {
-            const boardNode = boardFrameList[k].node;
+            const boardNode = boardFrameList[k];
             let boardNodePos = cc.v2(boardNode.x, boardNode.y)
             let dis =  boardNodePos.sub(tilePos).mag()
             //cc.pDistance(cc.v2(boardNode.x, boardNode.y), tilePos);
@@ -226,11 +226,8 @@ cc.Class({
     const distance = 35;
     const boardFrameList = this.board.boardFrameList;
     for (let i = 0; i < boardFrameList.length; i++) {
-      const frameNode = boardFrameList[i].node;
+      const frameNode = boardFrameList[i];
       const nodeDistance = frameNode.position.sub(pos).mag()
-    
-      //cc.pDistance(frameNode.position, pos);
-      //cc.log("checkDistance",pos.x,pos.y,frameNode.position.x,frameNode.position.y)
       if (nodeDistance <= distance) {
         return frameNode;
       }
@@ -241,7 +238,6 @@ cc.Class({
     const fillTiles = this.node.children; // 当前拖拽的方块总数。
     const boardTilesLength = boardTiles.length;
     const fillTilesLength = fillTiles.length;
-    //cc.log("checkCanDrop------------",boardTilesLength,fillTilesLength)
     // 如果当前棋盘与方块重合部分为零以及与方块数目不一致，则判定为不能落子。
     if (boardTilesLength === 0 || boardTilesLength != fillTilesLength) {
       return false;
@@ -253,14 +249,12 @@ cc.Class({
         return false;
       }
     }
-
     return true;
   },
   resetBoardFrames() {
     const boardFrameList = this.board.boardFrameList;
-
     for (let i = 0; i < boardFrameList.length; i++) {
-      const shadowNode = boardFrameList[i].node.getChildByName('shadowNode');
+      const shadowNode = boardFrameList[i].getChildByName('shadowNode');
       shadowNode.opacity = 0;
     }
   },

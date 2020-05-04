@@ -18,6 +18,7 @@ class HexUtil {
     }
     return true;
   }
+  
 }
 module.exports = HexUtil;
 

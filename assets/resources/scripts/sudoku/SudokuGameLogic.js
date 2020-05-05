@@ -26,6 +26,10 @@ cc.Class({
             default:null,
             type:cc.Node
         },
+        audio: {
+            default: null,
+            type: cc.AudioClip
+        },
         Level:1,
     },
 
@@ -44,7 +48,7 @@ cc.Class({
     {   
      
         const sudoku = new Sudoku();
-        this.Level = Global.SelectGameLevel;
+        this.Level = 6//Global.SelectGameLevel;
         console.log("BuildSudoku"+Global.SelectGameLevel)
         sudoku.make(this.Level);
         this._matrix = sudoku.puzzleMatrix;
@@ -77,6 +81,7 @@ cc.Class({
         }
     },
     PopNumberClick: function(event,customData){
+        cc.audioEngine.play(this.audio, false, 1);
         this._curPopNum = customData
         this._curSelectCustomData.SudokuLabel.string = this._curPopNum;
 
@@ -93,7 +98,7 @@ cc.Class({
         console.log(this.cells)
     },
     BindClickEvent: function (button,Item,handlerName) {
-        var clickEventHandler = new cc.Component.EventHandler();
+        let clickEventHandler = new cc.Component.EventHandler();
         //这个 node 节点是你的事件处理代码组件所属的节点
         clickEventHandler.target = this.node; 
         //这个是代码文件名
@@ -106,6 +111,7 @@ cc.Class({
 
     //点击事件回调 target ==》node， customEventData ==》 SudokuLabel,colIndex
     SudokuItemClick: function (event, customData) {
+        cc.audioEngine.play(this.audio, false, 1);
         let self = this
         let TargetNode = event.target;
         this._curSelectCustomData = customData
@@ -138,26 +144,32 @@ cc.Class({
 
     },
     CheckBtnClick(event,customData){
+        cc.tween(this.PopNumberNode).to(0.3, {scale: 0,opacity:0}).start();
+        cc.audioEngine.play(this.audio, false, 1);
         console.log("CheckBtnClick");
         const data =  this.cells.map((rowValues,rowIndex)  => rowValues.map((Info)=>{
             return Info.text
         }));
-        console.log(data)
+        //console.log(data)
         const checker = new Checker(data).Check();
-        console.log(checker.Success)
+        //console.log(checker.Success)
         if(checker.Success) {
             console.log("挑战成功");
             return true;
         }
         //标记错误
         const MatrixMarks = checker.MatrixMarks;
+        cc.log(MatrixMarks)
         this.cells.map((rowValues,rowIndex)  => rowValues.map((ColInfo)=>{
+            if (ColInfo.colIndex == 8 && rowIndex == 8){
+                cc.log(ColInfo.IsInitEmpty)
+            }
             if (!ColInfo.IsInitEmpty){ 
-             
                 return;
             }
             let SudokuItem = this.cells[rowIndex][ColInfo.colIndex].SudokuItem
             let SudokuItemBtn = SudokuItem.getComponent(cc.Button)
+            //cc.log("======================>",ColInfo.colIndex,rowIndex,MatrixMarks)
             if(MatrixMarks[rowIndex][ColInfo.colIndex]){
                 SudokuItemBtn.interactable = false;
                 return;
@@ -172,6 +184,8 @@ cc.Class({
     },
     //重置数独
     ResetBtnClick(event,customData){
+        cc.tween(this.PopNumberNode).to(0.3, {scale: 0,opacity:0}).start();
+        cc.audioEngine.play(this.audio, false, 1);
         console.log("ResetBtnClick");
         this.cells.map((rowValues,rowIndex)  => rowValues.map((ColInfo)=>{
             if (ColInfo.IsInitEmpty){ 
@@ -185,6 +199,8 @@ cc.Class({
         }));
     },
     ClearBtnClick(event,customData){
+        cc.tween(this.PopNumberNode).to(0.3, {scale: 0,opacity:0}).start();
+        cc.audioEngine.play(this.audio, false, 1);
         this.cells.map((rowValues,rowIndex)  => rowValues.map((ColInfo)=>{
             if (ColInfo.IsError){
                 ColInfo.IsError = false 
@@ -196,6 +212,8 @@ cc.Class({
     },
     //重建数独
     ReBuildBtnClick(event,customData){
+        cc.tween(this.PopNumberNode).to(0.3, {scale: 0,opacity:0}).start();
+        cc.audioEngine.play(this.audio, false, 1);
         console.log("ReBuildBtnClick");
         const sudoku = new Sudoku();
         sudoku.make(this.Level);
@@ -206,6 +224,7 @@ cc.Class({
             SudokuLabel.string = cellValue ? cellValue:"";
             let SudokuItemBtn = SudokuItem.getComponent(cc.Button)
             SudokuItemBtn.interactable = false
+            SudokuItemBtn.clickEvents = []
             let IsInitEmpty = false;
             if (cellValue == "") //已存在数字不增加点击事件
             {  
@@ -220,6 +239,7 @@ cc.Class({
 
     //返回主界面
     ReturnBtn(){
+        cc.audioEngine.play(this.audio, false, 1);
         cc.director.loadScene("GameScene");
     }
 

@@ -18,11 +18,11 @@ class Checker{
         const length = array.length
         const marks = new Array(length);
         marks.fill(true);
-        for (let i = 0; i < length - 1; i++) {
+        for (let i = 0; i < length; i++) {
             if (!marks[i]){
                 continue;
             }
-            const v = array[i];
+            let v = array[i];
             //是否有效 0-无效,1-9有效
             if(!v){
                 marks[i] = false;
@@ -60,6 +60,7 @@ class Checker{
             const row =  this._matrix[rowIndex];
             const marks = Checker.CheckArray(row);
             for (let colIndex = 0; colIndex < marks.length; colIndex++) {
+              //cc.log("CheckRows",rowIndex,colIndex)
                if(!marks[colIndex]){
                    this._matrixMarks[rowIndex][colIndex] = false;
                }
@@ -74,6 +75,7 @@ class Checker{
             }
             const marks = Checker.CheckArray(cols);
             for (let rowIndex = 0; rowIndex < marks.length; rowIndex++) {
+                //cc.log("CheckCols",rowIndex,colIndex)
                 if(!marks[rowIndex]){
                     this._matrixMarks[rowIndex][colIndex] = false;
                 } 

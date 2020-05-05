@@ -20,15 +20,18 @@ cc.Class({
     fillTilesList: {
       default: [],
       type: cc.Node
+    },
+    audio: {
+      default: null,
+      type: cc.AudioClip
     }
   },
 
   // LIFE-CYCLE CALLBACKS:
   start() { },
   onLoad() {
-    //初始化2种类型属性0是斜方向1是横方向
+    //初始化3种类型属性0是斜方向1是横方向
     this.delRules = []
-    //cc.log("===========onload",this.delRules)
     this.HexUtil = new HexUtil();
     this.setHexagonGrid();
     this.node.on('dropSuccess', this.deleteTile, this);
@@ -56,10 +59,8 @@ cc.Class({
         fulledTilesIndex.push(i);
       }
     }
-    cc.log("deleteTile---------1", fulledTilesIndex, this.delRules)
     for (let i = 0; i < this.delRules.length; i++) {
       const delRules = this.delRules[i]; // 消除规则获取
-      cc.log("deleteTile---------2", delRules)
       for (let index = 0; index < delRules.length; index++) {
         const delRule = delRules[index];
         // 逐一获取规则数组与存在方块格子数组的交集
@@ -75,7 +76,6 @@ cc.Class({
       }
 
     }
-    //cc.log("deleteTile---------3",readyDelTiles.length)
     //开始消除
     let count = 0;
     for (let i = 0; i < readyDelTiles.length; i++) {
@@ -318,7 +318,10 @@ cc.Class({
     newNode.addComponent(cc.Sprite);
     newNode.name = 'fillNode';
     newNode.parent = node;
-  }
+  },
 
-  // update (dt) {},
+  ReturnBtnClick(){
+    cc.audioEngine.play(this.audio, false, 1);
+    cc.director.loadScene("GameScene");
+  }
 });

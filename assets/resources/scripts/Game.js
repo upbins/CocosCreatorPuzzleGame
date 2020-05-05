@@ -9,11 +9,15 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
- 
+        audio: {
+            default: null,
+            type: cc.AudioClip
+        }
     },
 
 
     start () {
+     
     },
     GameButtonClick(Event,CustomData){
         switch (CustomData) {
@@ -34,6 +38,7 @@ cc.Class({
             default:
                 break;
         }
+        cc.audioEngine.play(this.audio, false, 1);
     },
     SelectButtonClick(Event,CustomData){
         let Level = 1
@@ -43,17 +48,17 @@ cc.Class({
                 Global.SelectGameLevel = Level; 
                 break;
             case "Normal":
-                Level = this.RandNum(4,6)
+                Level = this.RandNum(4,7)
                 Global.SelectGameLevel = Level; 
                 break;
             case "Difficult":
-                Level = this.RandNum(7,9)
+                Level = this.RandNum(8,9)
                 Global.SelectGameLevel = Level; 
-              
                 break;
             default:
                 break;
         }
+        cc.audioEngine.play(this.audio, false, 1);
         this.LoadScene();
     },
     RandNum(n,m){
@@ -72,6 +77,7 @@ cc.Class({
     ReturnBtnClick(){
         Global.SelectGameLevel = 0;
         cc.director.loadScene("GameScene");
+        cc.audioEngine.play(this.audio, false, 1);
     }
 });
 

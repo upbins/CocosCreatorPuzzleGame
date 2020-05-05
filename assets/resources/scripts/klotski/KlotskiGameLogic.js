@@ -18,6 +18,18 @@ cc.Class({
             default:null,
             type:cc.Prefab
         },
+        audio: {
+            default: null,
+            type: cc.AudioClip
+        },
+        HelpLayer:{
+            default: null,
+            type: cc.Node
+        },
+        TipsNode:{
+            default: null,
+            type: cc.Node
+        },
         Level:3,
         Duration: 0.15
     },
@@ -27,7 +39,6 @@ cc.Class({
     // onLoad () {},
 
     start () {
-      
         this.blankIndex = 0;
         this.currentPoint = null;
         this.puzzleLayer.on(cc.Node.EventType.TOUCH_END, this.OnClickTouch, this);
@@ -41,6 +52,23 @@ cc.Class({
         this.Length = klotski.Length;
         this.puzzleLayer.removeAllChildren();
         this.InitUI();
+        this.InitHelpLayer();
+    },
+    InitHelpLayer(){
+        let CurScale = 1
+        let Cell = this.TipsNode.width / this.Level * CurScale;
+        for (var Index = 0; Index < this.Length; Index++){
+            let tipsNumPrefab = cc.instantiate(this.numPrefab);
+            //let curIndex = Index-1
+            tipsNumPrefab.scale = CurScale
+            tipsNumPrefab.width = Cell * CurScale;
+            tipsNumPrefab.height = Cell * CurScale;
+            tipsNumPrefab.getChildByName("NumLabel").getComponent(cc.Label).string = Index;
+            tipsNumPrefab.getChildByName("NumLabel").getComponent(cc.Label).fontSize = tipsNumPrefab.height / 2;
+            this.TipsNode.addChild(tipsNumPrefab);
+            tipsNumPrefab.x = Index % this.Level * Cell + 0.5 * Cell, 
+            tipsNumPrefab.y = -Math.floor(Index / this.Level) * Cell - 0.5 * Cell;
+        }
     },
     InitUI(){
         this.Cell = this.puzzleLayer.width / this.Level;
@@ -63,6 +91,7 @@ cc.Class({
         }
     },
     OnClickTouch(event){
+        cc.audioEngine.play(this.audio, false, 1);
         this.currentPoint = this.puzzleLayer.convertToNodeSpaceAR(event.touch._point) 
         if (this.IsNeighboring()){
             this.Exchange()
@@ -76,17 +105,17 @@ cc.Class({
         this.currentRow = Math.floor(Math.abs(this.currentPoint.y) / this.Cell)
         this.currentCol = Math.floor(this.currentPoint.x / this.Cell)
         this.currentIndex = this.currentRow * this.Level + this.currentCol
-        console.log("点击了第" + this.currentRow + "行"), 
-        console.log("点击了第" + this.currentCol + "列")
-        console.log("this.currentIndex " + this.currentIndex)
-        console.log("this.blankIndex " + this.blankIndex)
+        // console.log("点击了第" + this.currentRow + "行"), 
+        // console.log("点击了第" + this.currentCol + "列")
+        // console.log("this.currentIndex " + this.currentIndex)
+        // console.log("this.blankIndex " + this.blankIndex)
         if (this.currentIndex != this.blankIndex)
         {
             this.blankRow = Math.floor(this.blankIndex / this.Level)
             this.blankCol = Math.floor(this.blankIndex % this.Level)
-            console.log("this.blankRow " + this.blankRow)
-            console.log("this.blankCol " + this.blankCol)
-            console.log("this.currentIndex " + this.currentIndex) 
+            // console.log("this.blankRow " + this.blankRow)
+            // console.log("this.blankCol " + this.blankCol)
+            // console.log("this.currentIndex " + this.currentIndex) 
             return this.currentRow == this.blankRow || this.currentCol == this.blankCol
         }else
         {
@@ -164,12 +193,34 @@ cc.Class({
         }
     },
     OnHelpBtnClick(){
-
+        var self = this
+        cc.audioEngine.play(self.audio, false, 1);
+        self.HelpLayer.active = true
+        self.HelpLayer.scale = 0;
+        self.HelpLayer.opacity = 0
+        self.HelpLayer.stopAllActions();
+        let StartCallFunc = cc.callFunc(function(){
+            cc.tween(self.HelpLayer).to(0.3, {scale: 1,opacity:255}).start();
+        })
+        self.HelpLayer.runAction(StartCallFunc);
+        //this.HelpLayer.active = true
     },
-    OnRefreshBtnClick(){
+    CloseHelpClick(){
+        var self = this
+        cc.audioEngine.play(self.audio, false, 1);
+        //this.HelpLayer.active = false
+        let StartCallFunc = cc.callFunc(function(){
+            cc.tween(self.HelpLayer).to(0.3, {scale: 0,opacity:0}).start();
+        })
+        self.HelpLayer.runAction(StartCallFunc);
+    },
+    OnRefreshBtnClick()
+    {
+        cc.audioEngine.play(this.audio, false, 1);
         this.GameStart()
     },
     OnReturnBtnClick(){
+        cc.audioEngine.play(this.audio, false, 1);
         cc.director.loadScene("GameScene");
     }
     // update (dt) {},

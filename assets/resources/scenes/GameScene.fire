@@ -171,7 +171,7 @@
       "array": [
         0,
         0,
-        682.4280181821377,
+        699.7485262578265,
         0,
         0,
         0,
@@ -625,7 +625,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 464,
+      "width": 559.85,
       "height": 148.9
     },
     "_anchorPoint": {
@@ -676,8 +676,8 @@
       }
     ],
     "_useOriginalSize": false,
-    "_string": "选择游戏",
-    "_N$string": "选择游戏",
+    "_string": "益 智 游 戏",
+    "_N$string": "益 智 游 戏",
     "_fontSize": 115,
     "_lineHeight": 115,
     "_enableWrapText": true,
@@ -1863,7 +1863,7 @@
     "component": "",
     "_componentId": "15794AzdLpKMpn9IoHiwVme",
     "handler": "GameButtonClick",
-    "customEventData": "KlotskiGame"
+    "customEventData": ""
   },
   {
     "__type__": "cc.Sprite",
@@ -2243,6 +2243,9 @@
       "__id__": 5
     },
     "_enabled": true,
+    "audio": {
+      "__uuid__": "50e9380e-b62e-4634-ae63-16b8f34b2f90"
+    },
     "_id": "7aBT4ITjlHEreqTrJbWTXI"
   },
   {

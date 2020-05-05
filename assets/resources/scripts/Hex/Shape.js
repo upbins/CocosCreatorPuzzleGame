@@ -40,6 +40,10 @@ cc.Class({
     type6: {
       default: null,
       type: cc.SpriteFrame
+    },
+    audio: {
+      default: null,
+      type: cc.AudioClip
     }
   },
 
@@ -89,6 +93,7 @@ cc.Class({
   },
   addTouchEvent() {
     this.node.on('touchstart', event => {
+      cc.audioEngine.play(this.audio, false, 1);
       this.node.setScale(1);
       this.node.children.forEach(child => {
         child.setScale(0.7);

@@ -38,6 +38,14 @@ cc.Class({
             default:null,
             type:cc.Prefab
         },
+        TimeLabel: {
+            default: null,
+            type: cc.Label,
+        },
+        StepLabel: {
+            default: null,
+            type: cc.Label
+        },
         Level:3,
         Duration: 0.15
     },
@@ -201,11 +209,21 @@ cc.Class({
             this.ShowWin();
         }
     },
-    ShowWin(){
-
+    ShowWin() {
+        let self = this
+        self.WinPrefabNode = cc.instantiate(self.WinPrefab)
+        self.WinPrefabNode.opacity = 0;
+        self.node.addChild(self.WinPrefabNode)
+        let fadeIn = cc.fadeIn(0.3)
+        self.WinPrefabNode.runAction(fadeIn)
     },
-    ShowLose(){
-
+    ShowLose() {
+        let self = this
+        self.LosePrefabNode = cc.instantiate(self.LosePrefab)
+        self.LosePrefabNode.opacity = 0;
+        self.node.addChild(self.LosePrefabNode)
+        let fadeIn = cc.fadeIn(0.3)
+        self.LosePrefabNode.runAction(fadeIn)
     },
     OnHelpBtnClick(){
         var self = this
@@ -237,6 +255,7 @@ cc.Class({
     OnReturnBtnClick(){
         cc.audioEngine.play(this.audio, false, 1);
         cc.director.loadScene("SelectScene");
-    }
+    },
+   
     // update (dt) {},
 });

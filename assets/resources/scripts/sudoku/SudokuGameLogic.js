@@ -22,6 +22,14 @@ cc.Class({
             default:null,
             type:cc.Prefab
         },
+        WinPrefab:{
+            default:null,
+            type:cc.Prefab
+        },
+        LosePrefab:{
+            default:null,
+            type:cc.Prefab
+        },
         PopNumberNode:{
             default:null,
             type:cc.Node
@@ -29,6 +37,22 @@ cc.Class({
         audio: {
             default: null,
             type: cc.AudioClip
+        },
+        WinPrefab:{
+            default:null,
+            type:cc.Prefab
+        },
+        LosePrefab:{
+            default:null,
+            type:cc.Prefab
+        },
+        TimeLabel:{
+            default:null,
+            type:cc.Label,
+        },
+        StepLabel:{
+            default:null,
+            type:cc.Label
         },
         Level:1,
     },
@@ -41,14 +65,40 @@ cc.Class({
         this._curSelectItem = null
         this._curPopNum = null
         this.PopNumberNode.active = false
+        this.WinPrefabNode = cc.instantiate(this.WinPrefab)
+        // this.WinPrefabNode.opacity = 0;
+        // this.WinPrefabNode.scale = 0;
+        this.node.addChild(this.WinPrefabNode)
+        this.LosePrefabNode = cc.instantiate(this.LosePrefab)
+        this.LosePrefabNode.opacity = 0;
+        this.LosePrefabNode.scale = 0;
+        this.node.addChild(this.LosePrefabNode)
         this.BuildSudoku();
         this.BuildPopNumber()
+        this.node.on('rebuildGame', function (event) {
+            event.stopPropagation();
+            this.ReBuildSudoku()
+        }.bind(this));
+        this.node.on('nextGame', function (event) {
+            event.stopPropagation();
+            this.BuildNextSudoku();
+        }.bind(this));
+        this.node.on('ShareGame', function (event) {
+            event.stopPropagation();
+        }.bind(this));
+    },
+    BuildNextSudoku(){
+        this.SudoKuNode.removeAllChildren()
+        console.log("BuildSudoku"+this.Level )
+        this.Level = this.Level + 1
+        Global.SelectGameLevel = this.Level;
+        this.BuildSudoku()
     },
     BuildSudoku()
     {   
      
         const sudoku = new Sudoku();
-        this.Level = 6//Global.SelectGameLevel;
+        this.Level = Global.SelectGameLevel;
         console.log("BuildSudoku"+Global.SelectGameLevel)
         sudoku.make(this.Level);
         this._matrix = sudoku.puzzleMatrix;
@@ -143,6 +193,28 @@ cc.Class({
     SudokuCheck(){
 
     },
+    ShowWin()
+    {   
+        let self = this
+        // cc.tween(this.WinPrefabNode).to(0.3, {scale: 1,opacity:255}).start();
+        let fadeOut = cc.fadeOut(0.3)
+        let callFunc = cc.callFunc(function () {
+                self.WinPrefabNode.getComponent("Win").SetBlock(true)
+            }
+        )
+        self.WinPrefabNode.runAction(cc.sequence(fadeOut,callFunc))
+    },
+    ShowLose(){
+        let self = this
+        // cc.tween(this.WinPrefabNode).to(0.3, {scale: 1,opacity:255}).start();
+        let fadeOut = cc.fadeOut(0.3)
+        let callFunc = cc.callFunc(function () {
+                self.LosePrefabNode.getComponent("Lose").SetBlock(true)
+            }
+        )
+        self.LosePrefabNode.runAction(cc.sequence(fadeOut,callFunc))
+        //cc.tween(this.LosePrefabNode).to(0.3, {scale: 1,opacity:255}).start();
+    },
     CheckBtnClick(event,customData){
         cc.tween(this.PopNumberNode).to(0.3, {scale: 0,opacity:0}).start();
         cc.audioEngine.play(this.audio, false, 1);
@@ -155,6 +227,7 @@ cc.Class({
         //console.log(checker.Success)
         if(checker.Success) {
             console.log("挑战成功");
+            this.ShowWin()
             return true;
         }
         //标记错误
@@ -212,9 +285,12 @@ cc.Class({
     },
     //重建数独
     ReBuildBtnClick(event,customData){
-        cc.tween(this.PopNumberNode).to(0.3, {scale: 0,opacity:0}).start();
-        cc.audioEngine.play(this.audio, false, 1);
+        this.ReBuildSudoku()
         console.log("ReBuildBtnClick");
+        cc.audioEngine.play(this.audio, false, 1);
+    },
+    ReBuildSudoku(){
+        cc.tween(this.PopNumberNode).to(0.3, {scale: 0,opacity:0}).start();
         const sudoku = new Sudoku();
         sudoku.make(this.Level);
         this._matrix = sudoku.puzzleMatrix;
@@ -240,7 +316,7 @@ cc.Class({
     //返回主界面
     ReturnBtn(){
         cc.audioEngine.play(this.audio, false, 1);
-        cc.director.loadScene("GameScene");
+        cc.director.loadScene("SelectScene");
     }
 
     // update (dt) {},

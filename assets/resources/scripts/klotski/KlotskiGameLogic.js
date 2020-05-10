@@ -30,6 +30,14 @@ cc.Class({
             default: null,
             type: cc.Node
         },
+        WinPrefab:{
+            default:null,
+            type:cc.Prefab
+        },
+        LosePrefab:{
+            default:null,
+            type:cc.Prefab
+        },
         Level:3,
         Duration: 0.15
     },
@@ -190,7 +198,14 @@ cc.Class({
         }
         if (IsFinish){
             console.log("通关成功");
+            this.ShowWin();
         }
+    },
+    ShowWin(){
+
+    },
+    ShowLose(){
+
     },
     OnHelpBtnClick(){
         var self = this
@@ -221,7 +236,7 @@ cc.Class({
     },
     OnReturnBtnClick(){
         cc.audioEngine.play(this.audio, false, 1);
-        cc.director.loadScene("GameScene");
+        cc.director.loadScene("SelectScene");
     }
     // update (dt) {},
 });

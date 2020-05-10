@@ -39,38 +39,34 @@ cc.Class({
         let callFunc = cc.callFunc(callback)
         this.node.runAction(cc.sequence(fadeOut,callFunc))
     },
-    SetBlock(IsBlock){
-        let BlockBtn = this.Block.getComponent(cc.Button);
-        BlockBtn.interactable = IsBlock;
-    },
     start () {
         this.CloseBtn.node.on("touchend",function () {;
             this.ActionFunc(function () {
-                this.SetBlock(false)
+                //this.SetBlock(false)
+                this.node.removeFromParent();
                 cc.director.loadScene("SelectScene");
             }.bind(this))
             
         },this)
         this.ShareBtn.node.on("touchend",function () {
             this.ActionFunc(function () {
-                this.SetBlock(false)
                 this.node.dispatchEvent( new cc.Event.EventCustom('ShareGame', true));
+                this.node.removeFromParent();
             }.bind(this))
          
         },this)
         this.AgainBtn.node.on("touchend",function () {
             this.ActionFunc(function () {
-                this.SetBlock(false)
-                this.node.dispatchEvent( new cc.Event.EventCustom('rebuildGame', true));
+                this.node.dispatchEvent(new cc.Event.EventCustom('AgainGame', true));
+                this.node.removeFromParent();
             }.bind(this))
             
         },this)
         this.NextBtn.node.on("touchend",function () {
             this.ActionFunc(function () {
-                this.SetBlock(false)
                 this.node.dispatchEvent( new cc.Event.EventCustom('nextGame', true));
+                this.node.removeFromParent();
             }.bind(this))
-            //cc.tween(this.node).to(0.3, {opacity:0}).start();
         },this)
     },
     

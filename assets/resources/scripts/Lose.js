@@ -32,22 +32,17 @@ cc.Class({
         let callFunc = cc.callFunc(callback)
         this.node.runAction(cc.sequence(fadeOut,callFunc))
     },
-    SetBlock(IsBlock){
-        let BlockBtn = this.Block.getComponent(cc.Button);
-        BlockBtn.interactable = IsBlock;
-    },
-
     start () {
         this.CloseBtn.node.on("touchend",function () {
             this.ActionFunc(function () {
-                this.SetBlock(false)
                 cc.director.loadScene("SelectScene");
+                this.node.removeFromParent();
             }.bind(this))
         },this)
         this.AgainBtn.node.on("touchend",function () {
             this.ActionFunc(function () {
-                this.SetBlock(false)
-                this.node.dispatchEvent( new cc.Event.EventCustom('rebuildGame', true));
+                this.node.dispatchEvent( new cc.Event.EventCustom('AgainGame', true));
+                this.node.removeFromParent();
             }.bind(this))
             //this.node.dispatchEvent( new cc.Event.EventCustom('rebuildGame', true));
         },this)

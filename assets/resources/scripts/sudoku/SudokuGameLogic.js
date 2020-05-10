@@ -64,39 +64,41 @@ cc.Class({
     start () {
         this._curSelectItem = null
         this._curPopNum = null
-        this.PopNumberNode.active = false
-        this.WinPrefabNode = cc.instantiate(this.WinPrefab)
-        // this.WinPrefabNode.opacity = 0;
-        // this.WinPrefabNode.scale = 0;
-        this.node.addChild(this.WinPrefabNode)
-        this.LosePrefabNode = cc.instantiate(this.LosePrefab)
-        this.LosePrefabNode.opacity = 0;
-        this.LosePrefabNode.scale = 0;
-        this.node.addChild(this.LosePrefabNode)
+		this.PopNumberNode.active = false
+		this.StepNum = 0
         this.BuildSudoku();
         this.BuildPopNumber()
-        this.node.on('rebuildGame', function (event) {
-            event.stopPropagation();
-            this.ReBuildSudoku()
-        }.bind(this));
         this.node.on('nextGame', function (event) {
             event.stopPropagation();
             this.BuildNextSudoku();
         }.bind(this));
         this.node.on('ShareGame', function (event) {
             event.stopPropagation();
-        }.bind(this));
-    },
+		}.bind(this));
+		this.node.on('AgainGame', function (event) {
+			event.stopPropagation();
+			this.ReResetSudoku();
+			this.ClearOther();
+		}.bind(this));
+	},
+	ClearOther(){
+		this.TimeLabel.string = "剩余时间:00:00";
+		this.StepLabel.string = '步数:0'
+		this.StepNum = 0
+	},
     BuildNextSudoku(){
         this.SudoKuNode.removeAllChildren()
-        console.log("BuildSudoku"+this.Level )
+        console.log("BuildSudoku"+this.Level)
         this.Level = this.Level + 1
         Global.SelectGameLevel = this.Level;
         this.BuildSudoku()
-    },
+	},
+	CountStepNum(){
+		this.StepNum = this.StepNum + 1;
+		this.StepLabel.string = "步数:" + this.StepNum;
+	},
     BuildSudoku()
     {   
-     
         const sudoku = new Sudoku();
         this.Level = Global.SelectGameLevel;
         console.log("BuildSudoku"+Global.SelectGameLevel)
@@ -134,7 +136,7 @@ cc.Class({
         cc.audioEngine.play(this.audio, false, 1);
         this._curPopNum = customData
         this._curSelectCustomData.SudokuLabel.string = this._curPopNum;
-
+		this.CountStepNum()
         cc.tween(this.PopNumberNode).to(0.3, {scale: 0,opacity:0}).start();
         this.UpdateCellItemInfo(this._curPopNum, this._curSelectCustomData.rowIndex,this._curSelectCustomData.colIndex)
     },
@@ -191,29 +193,23 @@ cc.Class({
     },
 
     SudokuCheck(){
-
     },
     ShowWin()
-    {   
-        let self = this
-        // cc.tween(this.WinPrefabNode).to(0.3, {scale: 1,opacity:255}).start();
-        let fadeOut = cc.fadeOut(0.3)
-        let callFunc = cc.callFunc(function () {
-                self.WinPrefabNode.getComponent("Win").SetBlock(true)
-            }
-        )
-        self.WinPrefabNode.runAction(cc.sequence(fadeOut,callFunc))
+	{
+		let self = this
+		self.WinPrefabNode = cc.instantiate(self.WinPrefab)
+		self.WinPrefabNode.opacity = 0;
+		self.node.addChild(self.WinPrefabNode)
+		let fadeIn = cc.fadeIn(0.3)
+		self.WinPrefabNode.runAction(fadeIn)
     },
     ShowLose(){
-        let self = this
-        // cc.tween(this.WinPrefabNode).to(0.3, {scale: 1,opacity:255}).start();
-        let fadeOut = cc.fadeOut(0.3)
-        let callFunc = cc.callFunc(function () {
-                self.LosePrefabNode.getComponent("Lose").SetBlock(true)
-            }
-        )
-        self.LosePrefabNode.runAction(cc.sequence(fadeOut,callFunc))
-        //cc.tween(this.LosePrefabNode).to(0.3, {scale: 1,opacity:255}).start();
+		let self = this
+		self.LosePrefabNode = cc.instantiate(self.LosePrefab)
+		self.LosePrefabNode.opacity = 0;
+		self.node.addChild(self.LosePrefabNode)
+		let fadeIn = cc.fadeIn(0.3)
+		self.LosePrefabNode.runAction(fadeIn)
     },
     CheckBtnClick(event,customData){
         cc.tween(this.PopNumberNode).to(0.3, {scale: 0,opacity:0}).start();
@@ -257,32 +253,37 @@ cc.Class({
     },
     //重置数独
     ResetBtnClick(event,customData){
-        cc.tween(this.PopNumberNode).to(0.3, {scale: 0,opacity:0}).start();
+		//this.ShowLose();
         cc.audioEngine.play(this.audio, false, 1);
         console.log("ResetBtnClick");
-        this.cells.map((rowValues,rowIndex)  => rowValues.map((ColInfo)=>{
-            if (ColInfo.IsInitEmpty){ 
-                ColInfo.text = 0
-                let SudokuItem = ColInfo.SudokuItem
-                let SudokuItemBtn = SudokuItem.getComponent(cc.Button)
-                let SudokuLabel = SudokuItem.getChildByName("SudokuLabel").getComponent(cc.Label);
-                SudokuLabel.string = "" 
-                SudokuItemBtn.interactable = true;
-            }
-        }));
-    },
+        
+	},
+	ReResetSudoku() {
+		cc.tween(this.PopNumberNode).to(0.3, { scale: 0, opacity: 0 }).start();
+		this.cells.map((rowValues, rowIndex) => rowValues.map((ColInfo) => {
+			if (ColInfo.IsInitEmpty) {
+				ColInfo.text = 0
+				let SudokuItem = ColInfo.SudokuItem
+				let SudokuItemBtn = SudokuItem.getComponent(cc.Button)
+				let SudokuLabel = SudokuItem.getChildByName("SudokuLabel").getComponent(cc.Label);
+				SudokuLabel.string = ""
+				SudokuItemBtn.interactable = true;
+			}
+		}));
+	},
     ClearBtnClick(event,customData){
-        cc.tween(this.PopNumberNode).to(0.3, {scale: 0,opacity:0}).start();
-        cc.audioEngine.play(this.audio, false, 1);
-        this.cells.map((rowValues,rowIndex)  => rowValues.map((ColInfo)=>{
-            if (ColInfo.IsError){
-                ColInfo.IsError = false 
-                let SudokuItem = this.cells[rowIndex][ColInfo.colIndex].SudokuItem
-                let SudokuLabel = SudokuItem.getChildByName("SudokuLabel").getComponent(cc.Label);
-                SudokuLabel.string = "";
-            }
-        }));
-    },
+		cc.audioEngine.play(this.audio, false, 1);
+		cc.tween(this.PopNumberNode).to(0.3, { scale: 0, opacity: 0 }).start();
+		this.cells.map((rowValues, rowIndex) => rowValues.map((ColInfo) => {
+			if (ColInfo.IsError) {
+				ColInfo.IsError = false
+				let SudokuItem = this.cells[rowIndex][ColInfo.colIndex].SudokuItem
+				let SudokuLabel = SudokuItem.getChildByName("SudokuLabel").getComponent(cc.Label);
+				SudokuLabel.string = "";
+			}
+		}));
+	},
+
     //重建数独
     ReBuildBtnClick(event,customData){
         this.ReBuildSudoku()
@@ -315,7 +316,8 @@ cc.Class({
 
     //返回主界面
     ReturnBtn(){
-        cc.audioEngine.play(this.audio, false, 1);
+		cc.audioEngine.play(this.audio, false, 1);
+		console.log(Global.SelectGameType, Global.SelectGameType == "SudokuGame")
         cc.director.loadScene("SelectScene");
     }
 

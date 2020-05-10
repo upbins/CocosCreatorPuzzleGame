@@ -171,7 +171,7 @@
       "array": [
         0,
         0,
-        701.4805770653953,
+        324.7595264191645,
         0,
         0,
         0,
@@ -339,19 +339,19 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 200,
+      "width": 311.21,
       "height": 50.4
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0.5,
+      "x": 0,
       "y": 0.5
     },
     "_trs": {
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -224.272,
+        -323.371,
         490,
         0,
         0,
@@ -390,8 +390,8 @@
       }
     ],
     "_useOriginalSize": false,
-    "_string": "剩余时间：",
-    "_N$string": "剩余时间：",
+    "_string": "剩余时间：00:00 ",
+    "_N$string": "剩余时间：00:00 ",
     "_fontSize": 40,
     "_lineHeight": 40,
     "_enableWrapText": true,
@@ -433,19 +433,19 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 91.11,
+      "width": 113.36,
       "height": 50.4
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0.5,
+      "x": 0,
       "y": 0.5
     },
     "_trs": {
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        120.606,
+        63.012,
         490,
         0,
         0,
@@ -484,8 +484,8 @@
       }
     ],
     "_useOriginalSize": false,
-    "_string": "步数:",
-    "_N$string": "步数:",
+    "_string": "步数:0",
+    "_N$string": "步数:0",
     "_fontSize": 40,
     "_lineHeight": 40,
     "_enableWrapText": true,

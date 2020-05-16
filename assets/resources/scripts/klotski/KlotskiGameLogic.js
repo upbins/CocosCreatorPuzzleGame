@@ -55,10 +55,58 @@ cc.Class({
     // onLoad () {},
 
     start () {
+        this.MaxTime = 30;
+        this.TimeLabel.string = "剩余时间:" + this.MaxTime;
+        this.StepNum = 0
         this.blankIndex = 0;
         this.currentPoint = null;
         this.puzzleLayer.on(cc.Node.EventType.TOUCH_END, this.OnClickTouch, this);
-        this.GameStart()
+        this.GameStart();
+        this.node.on('nextGame', function (event) {
+            event.stopPropagation();
+            this.BuildNextKlotkiGame();
+        }.bind(this));
+        this.node.on('ShareGame', function (event) {
+            event.stopPropagation();
+        }.bind(this));
+        this.node.on('AgainGame', function (event) {
+            event.stopPropagation();
+            this.GameStart();
+            this.ClearOther();
+        }.bind(this));
+        // 以秒为单位的时间间隔
+        this.StartTimer()
+    },
+    BuildNextKlotkiGame(){
+        this.puzzleLayer.removeAllChildren()
+        console.log("BuildKlotkiGame" + this.Level)
+        this.Level = this.Level + 1
+        Global.SelectGameLevel = this.Level;
+        this.GameStart();
+    },
+    ClearOther() {
+        this.StepNum = 0;
+        this.MaxTime = 30;
+        this.TimeLabel.string = "剩余时间:" + this.MaxTime;
+        this.StepLabel.string = '步数:' + this.StepNum;
+        this.StartTimer();
+    },
+    StartTimer() {
+        if (this.callback) {
+            this.unschedule(this.callback);
+        }
+        this.callback = function () {
+            this.CountTimeLabel();
+        }
+        this.schedule(this.callback, 1);
+    },
+    CountTimeLabel(){
+        this.MaxTime = this.MaxTime - 1; 
+        this.TimeLabel.string = '剩余时间:'+this.MaxTime;
+        if (this.MaxTime <= 0)  {
+            this.unschedule(this.callback);
+            this.ShowLose();
+        }
     },
     GameStart(){
         const klotski = new Klotski();
@@ -115,6 +163,11 @@ cc.Class({
         }else{
             this.IsNeighboring()
         }
+        this.CountStepNum();
+    },
+    CountStepNum() {
+        this.StepNum = this.StepNum + 1;
+        this.StepLabel.string = "步数:" + this.StepNum;
     },
     IsNeighboring(){
         //找出第几行第几列当前点击
@@ -210,6 +263,7 @@ cc.Class({
         }
     },
     ShowWin() {
+        Global.PassTime = this.MaxTime;
         let self = this
         self.WinPrefabNode = cc.instantiate(self.WinPrefab)
         self.WinPrefabNode.opacity = 0;
@@ -236,7 +290,6 @@ cc.Class({
             cc.tween(self.HelpLayer).to(0.3, {scale: 1,opacity:255}).start();
         })
         self.HelpLayer.runAction(StartCallFunc);
-        //this.HelpLayer.active = true
     },
     CloseHelpClick(){
         var self = this
@@ -253,6 +306,7 @@ cc.Class({
         this.GameStart()
     },
     OnReturnBtnClick(){
+        this.unschedule(this.callback);
         cc.audioEngine.play(this.audio, false, 1);
         cc.director.loadScene("SelectScene");
     },

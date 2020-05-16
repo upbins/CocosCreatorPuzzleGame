@@ -8,6 +8,7 @@ class Global{
     SelectGameLevel = 0;
     GameLevels = 0;
     LocalStorage = LocalStorage;
+    PassTime = 0;
 }
 let global = new Global()
 module.exports = global

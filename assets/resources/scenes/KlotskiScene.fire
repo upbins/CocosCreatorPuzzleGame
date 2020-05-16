@@ -405,7 +405,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 311.21,
+      "width": 244.49,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -456,8 +456,8 @@
       }
     ],
     "_useOriginalSize": false,
-    "_string": "剩余时间：00:00 ",
-    "_N$string": "剩余时间：00:00 ",
+    "_string": "剩余时间：00",
+    "_N$string": "剩余时间：00",
     "_fontSize": 40,
     "_lineHeight": 40,
     "_enableWrapText": true,

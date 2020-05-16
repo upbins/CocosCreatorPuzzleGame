@@ -65,7 +65,9 @@ cc.Class({
         this._curSelectItem = null
         this._curPopNum = null
 		this.PopNumberNode.active = false
-		this.StepNum = 0
+        this.StepNum = 0;
+        this.MaxTime = 30;
+        this.TimeLabel.string = "剩余时间:" + this.MaxTime;
         this.BuildSudoku();
         this.BuildPopNumber()
         this.node.on('nextGame', function (event) {
@@ -79,13 +81,33 @@ cc.Class({
 			event.stopPropagation();
 			this.ReResetSudoku();
 			this.ClearOther();
-		}.bind(this));
-	},
-	ClearOther(){
-		this.TimeLabel.string = "剩余时间:00:00";
-		this.StepLabel.string = '步数:0'
-		this.StepNum = 0
-	},
+        }.bind(this));
+        this.StartTimer()
+    },
+    StartTimer(){
+        if (this.callback){
+            this.unschedule(this.callback);
+        }
+        this.callback = function () {
+            this.CountTimeLabel();
+        }
+        this.schedule(this.callback, 1);
+    },
+    ClearOther() {
+        this.StepNum = 0;
+        this.MaxTime = 30;
+        this.TimeLabel.string = "剩余时间:" + this.MaxTime;
+        this.StepLabel.string = '步数:' + this.StepNum;
+        this.StartTimer();
+    },
+    CountTimeLabel() {
+        this.MaxTime = this.MaxTime - 1;
+        this.TimeLabel.string = '剩余时间:' + this.MaxTime;
+        if (this.MaxTime <= 0) {
+            this.unschedule(this.callback);
+            this.ShowLose();
+        }
+    },
     BuildNextSudoku(){
         this.SudoKuNode.removeAllChildren()
         console.log("BuildSudoku"+this.Level)
@@ -195,7 +217,8 @@ cc.Class({
     SudokuCheck(){
     },
     ShowWin()
-	{
+	{   
+        Global.PassTime = this.MaxTime;
 		let self = this
 		self.WinPrefabNode = cc.instantiate(self.WinPrefab)
 		self.WinPrefabNode.opacity = 0;
@@ -253,10 +276,9 @@ cc.Class({
     },
     //重置数独
     ResetBtnClick(event,customData){
-		//this.ShowLose();
         cc.audioEngine.play(this.audio, false, 1);
         console.log("ResetBtnClick");
-        
+        this.ReResetSudoku();
 	},
 	ReResetSudoku() {
 		cc.tween(this.PopNumberNode).to(0.3, { scale: 0, opacity: 0 }).start();
@@ -316,6 +338,7 @@ cc.Class({
 
     //返回主界面
     ReturnBtn(){
+        this.unschedule(this.callback);
 		cc.audioEngine.play(this.audio, false, 1);
 		console.log(Global.SelectGameType, Global.SelectGameType == "SudokuGame")
         cc.director.loadScene("SelectScene");

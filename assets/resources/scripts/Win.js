@@ -5,6 +5,7 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 let SudoKuGame = require("../scripts/sudoku/SudokuGameLogic")
+let Global = require('../scripts/Global')
 cc.Class({
     extends: cc.Component,
 
@@ -39,7 +40,11 @@ cc.Class({
         let callFunc = cc.callFunc(callback)
         this.node.runAction(cc.sequence(fadeOut,callFunc))
     },
+    ShowInfo(){
+        this.DescLabel.string = "本次通过时间为:" + Global.PassTime;
+    },
     start () {
+        this.ShowInfo();
         this.CloseBtn.node.on("touchend",function () {;
             this.ActionFunc(function () {
                 //this.SetBlock(false)

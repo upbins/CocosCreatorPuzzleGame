@@ -41,7 +41,7 @@ cc.Class({
         this.node.runAction(cc.sequence(fadeOut,callFunc))
     },
     ShowInfo(){
-        this.DescLabel.string = "本次通过时间为:" + Global.PassTime;
+        this.DescLabel.string = "本次通关时间为:" + Global.PassTime + "s";
     },
     start () {
         this.ShowInfo();

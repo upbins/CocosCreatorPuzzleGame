@@ -35,12 +35,24 @@ cc.Class({
     },
     InitBar(index){
         this.Level = index;
-        cc.log("====================>",Global.GameLevels,Global.SelectGameType,this.Level)
-      
+     
+        let KeyTime = Global.SelectGameType + "levelTime_"//
+        let KeyTimes = Global.SelectGameType + "times_" //次数
         this.LevelLabel.string = index + "×" + index;
-        if (cc.sys.localStorage.getItem("times_" + this.level))
+        cc.log("====================>InitBar",Global.GameLevels,Global.SelectGameType,this.Level,cc.sys.localStorage.getItem(KeyTime + this.Level),KeyTime + this.Level)
+        if (cc.sys.localStorage.getItem(KeyTime + this.Level))
         {
-           let timeNum = cc.sys.localStorage.getItem("times_" + this.level);
+          this.BestTime = cc.sys.localStorage.getItem(KeyTime + this.Level);
+          let t = this.BestTime.toString();
+          this.BestLabel.string = "最佳: " + t + "s"
+          this.InitStar();
+       } else
+       {
+            this.BestLabel.string = "最佳: --"
+       }
+        if (cc.sys.localStorage.getItem(KeyTimes + this.Level))
+        {
+           let timeNum = cc.sys.localStorage.getItem(KeyTimes + this.Level);
            timeNum = Math.round(timeNum),
            this.TimeLabel.string = "次数: " + timeNum;
        } else 
@@ -49,7 +61,11 @@ cc.Class({
         }
     },
     InitStar(){
-
+        if (this.BestTime) {
+            for (var e = Global.ScoreConfig[this.Level - 3], t = 0, n = Global.ScoreConfig[this.Level - 3].length - 1; n >= 0 && this.BestTime <= e[n]; n--) 
+            t++;
+            for (var i = 0; i < t; i++) this.StarArray[i].spriteFrame = this.YellowStar;
+        }
     },
 
 });

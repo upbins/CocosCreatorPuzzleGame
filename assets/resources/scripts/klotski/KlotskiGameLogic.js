@@ -55,13 +55,14 @@ cc.Class({
     // onLoad () {},
 
     start () {
-        this.MaxTime = 30;
-        this.TimeLabel.string = "剩余时间:" + this.MaxTime;
+        this.Time = 0
+        this.TimeLabel.string = "时间:" + this.Time;
         this.StepNum = 0
         this.blankIndex = 0;
         this.currentPoint = null;
         this.puzzleLayer.on(cc.Node.EventType.TOUCH_END, this.OnClickTouch, this);
         this.GameStart();
+        this.MaxTime = Global.GameMaxTime[Global.SelectGameLevel - 3];
         this.node.on('nextGame', function (event) {
             event.stopPropagation();
             this.BuildNextKlotkiGame();
@@ -86,25 +87,23 @@ cc.Class({
     },
     ClearOther() {
         this.StepNum = 0;
-        this.MaxTime = 30;
-        this.TimeLabel.string = "剩余时间:" + this.MaxTime;
+        this.MaxTime = Global.GameMaxTime[Global.SelectGameLevel - 3];
+        this.Time = 0
+        this.TimeLabel.string = "时间:" + this.Time;
         this.StepLabel.string = '步数:' + this.StepNum;
         this.StartTimer();
     },
     StartTimer() {
-        if (this.callback) {
-            this.unschedule(this.callback);
+        if (this.CountTimeLabel) {
+            this.unschedule(this.CountTimeLabel);
         }
-        this.callback = function () {
-            this.CountTimeLabel();
-        }
-        this.schedule(this.callback, 1);
+        this.schedule(this.CountTimeLabel, 1);
     },
     CountTimeLabel(){
-        this.MaxTime = this.MaxTime - 1; 
-        this.TimeLabel.string = '剩余时间:'+this.MaxTime;
-        if (this.MaxTime <= 0)  {
-            this.unschedule(this.callback);
+        this.Time = this.Time + 1
+        this.TimeLabel.string = '时间:' +  this.Time;
+        if ( this.Time >= this.MaxTime)  {
+            this.unschedule(this.CountTimeLabel);
             this.ShowLose();
         }
     },
@@ -243,27 +242,50 @@ cc.Class({
     },
     CheckAll(){
         let Chiles = this.puzzleLayer.getChildren()
-        let IsFinish = false
-        for (t = 0; t < this.Length - 1; t++)
-        {
-            let string = Chiles[t].getChildByName("NumLabel").getComponent(cc.Label).string 
-            console.log(string);
-            if (string != t + 1) {
-                console.log("还没通关");
-                IsFinish = false;
-                break;
-            }else{
-                IsFinish = true;
-            }
+        let IsFinish = true
+        // for (t = 0; t < this.Length - 1; t++)
+        // {
+        //     let string = Chiles[t].getChildByName("NumLabel").getComponent(cc.Label).string 
+        //     console.log(string);
+        //     if (string != t + 1) {
+        //         console.log("还没通关");
+        //         IsFinish = false;
+        //         break;
+        //     }else{
+        //         IsFinish = true;
+        //     }
            
-        }
+        // }
         if (IsFinish){
             console.log("通关成功");
+            this.unschedule(this.CountTimeLabel)
+            let KeyTime = Global.SelectGameType + "levelTime_"//
+            let KeyTimes = Global.SelectGameType + "times_" //次数
+            let LastTime = cc.sys.localStorage.getItem(KeyTime + this.Level)
+            let LastTimes =cc.sys.localStorage.getItem(KeyTimes + this.level)
+            console.log("CheckAll====>",LastTime,LastTimes)
+            if (!LastTime)//不存在时间
+            {
+                cc.sys.localStorage.setItem(KeyTime+ this.Level,this.Time)
+            }else{
+                let IsQuickLastTime = cc.sys.localStorage.getItem(KeyTime + this.Level) > this.Time
+                 if (IsQuickLastTime){
+                    cc.sys.localStorage.setItem(KeyTime+ this.Level,this.Time);
+                }
+            }
+            if (!LastTimes)//不存在次数
+            {
+                let n = cc.sys.localStorage.getItem(KeyTimes + this.Level);
+                n = Math.round(n) + 1
+                cc.sys.localStorage.setItem(KeyTimes + this.Level, n);
+            }else{
+                cc.sys.localStorage.setItem(KeyTimes+ this.Level, 1);
+            }
             this.ShowWin();
         }
     },
     ShowWin() {
-        Global.PassTime = this.MaxTime;
+        Global.PassTime = this.Time;
         let self = this
         self.WinPrefabNode = cc.instantiate(self.WinPrefab)
         self.WinPrefabNode.opacity = 0;

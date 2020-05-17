@@ -10,7 +10,7 @@ cc.Class({
 
   properties: {
     tileH: 83, // 方块六边形高度
-    tileScale: 0.6, // 方块默认缩放值，用于点击后放大效果
+    tileScale: 0.5, // 方块默认缩放值，用于点击后放大效果
     board: {
       // 获取棋盘节点访问
       default: null,
@@ -66,6 +66,7 @@ cc.Class({
     this.node.scale = this.tileScale;
     this.node.ox = this.node.x;
     this.node.oy = this.node.y;
+    cc.log("=================",this.node.ox,this.node.oy)
   },
   random() {
     const shape = this.tiles[getRandomInt(0, this.tiles.length)];
@@ -96,7 +97,7 @@ cc.Class({
       cc.audioEngine.play(this.audio, false, 1);
       this.node.setScale(1);
       this.node.children.forEach(child => {
-        child.setScale(0.7);
+        child.setScale(0.9);
       });
       this.boardTiles = [];
       this.fillTiles = [];
@@ -202,12 +203,14 @@ cc.Class({
     this.node.removeAllChildren();
     this.node.x = this.node.ox;
     this.node.y = this.node.oy;
+    cc.log("=================resetTile",this.node.ox,this.node.oy)
     this.setTile();
   },
   backSourcePos() {
     this.node.scale = this.tileScale;
     this.node.x = this.node.ox;
     this.node.y = this.node.oy;
+    cc.log("=================resetTile",this.node.ox,this.node.oy)
     this.node.children.forEach(child => {
       child.setScale(1);
     });

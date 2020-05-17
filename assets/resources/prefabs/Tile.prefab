@@ -37,7 +37,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 200,
-      "height": 300
+      "height": 200
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -102,6 +102,7 @@
     "type6": {
       "__uuid__": "92b5cc61-5aa5-4703-9c83-8d6728341cbd"
     },
+    "audio": null,
     "_id": ""
   },
   {

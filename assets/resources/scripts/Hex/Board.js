@@ -2,6 +2,7 @@
 let theScore = 0;
 let HexUtil = require("../Hex/Util")
 let Config = require("../Hex/Config")
+let Global = require("../Global")
 cc.Class({
   extends: cc.Component,
 
@@ -24,7 +25,11 @@ cc.Class({
     audio: {
       default: null,
       type: cc.AudioClip
-    }
+    },
+    WinPrefab:{
+      default:null,
+      type:cc.Prefab
+  },
   },
 
   // LIFE-CYCLE CALLBACKS:
@@ -143,6 +148,13 @@ cc.Class({
     }
   },
   gameOver() {
+    Global.PassTime = theScore;
+    let self = this
+    self.WinPrefabNode = cc.instantiate(self.WinPrefab)
+    self.WinPrefabNode.opacity = 0;
+    self.node.addChild(self.WinPrefabNode)
+    let fadeIn = cc.fadeIn(0.3)
+    self.WinPrefabNode.runAction(fadeIn)
     cc.log("============>>游戏结束")
   },
   setHexagonGrid() {
